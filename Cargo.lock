@@ -367,6 +367,7 @@ dependencies = [
 name = "riero"
 version = "0.1.0"
 dependencies = [
+ "fastrand",
  "minifb",
 ]
 
