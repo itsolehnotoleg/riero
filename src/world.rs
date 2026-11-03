@@ -94,7 +94,7 @@ impl World{
 	} 
     }
     // swap two cells. a grain trades places with air
-    fn swap(&mut self, x1: i32, y1: i32, y2: i32){
+    fn swap(&mut self, x1: i32, y1: i32, x2: i32, y2: i32){
         let a = self.index(x1 as usize, y1 as usize);
 	let b = self.index(x2 as usize, y2 as usize);
 	self.cells.swap(a, b);
@@ -105,7 +105,7 @@ impl World{
         // goes bottom to top
 	// falling grain moves only once per frame
 	for y in(0..self.height as i32).rev(){
-            for x in 0..self.width  as 132{
+            for x in 0..self.width  as i32{
 	        let i = self.index(x as usize, y as usize);
 		if self.cells[i].material == Material::Sand{
 	            self.update_sand(x, y);
