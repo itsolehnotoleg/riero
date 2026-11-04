@@ -9,6 +9,21 @@ const WIDTH: usize = 320;  // world width in cells
 const HEIGHT: usize = 200; // world height i cells
 const BRUSH: i32 = 3;      // radius of the sand brush in cells
 
+fn pour(world: &mut World, cx: i32, cy: i32, material: Material){
+    for dy in -BRUSH..=BRUSH{
+        for dx in -BRUSH..=BRUSH{
+	    let x = cx + dx;
+	    let y = cy + dy;
+	    let inside_circle = dx * dx + dy * dy <= BRUSH * BRUSH;
+	    let sprinkle = fastrand::u8(0..4) == 0;
+
+	    if inside_circle && sprinkle && world.is_empty(x, y){
+	        world.set(x, y, material);
+	    }
+	}
+    }
+}
+
 fn main(){
     let mut buffer: Vec<u32> = vec![0; WIDTH * HEIGHT];
     // world simulation
@@ -27,30 +42,19 @@ fn main(){
     window.set_target_fps(60);
 
     while window.is_open() && !window.is_key_down(Key::Escape){
-        // input: pour sand (using lmb)
-	if window.get_mouse_down(MouseButton::Left){
-	    // mouse pos in world cells
-	    // (none if outside of window range)
-	    if let Some((mx, my)) = window.get_mouse_pos(MouseMode::Discard){
-	        let cx = mx as i32;
-		let cy = my as i32;
-                for dy in -BRUSH..=BRUSH{
-	            for dx in -BRUSH..=BRUSH{
-		        let x = cx + dx;
-		        let y = cy + dy;
-		        // pythagoras
-		        let inside_circle = dx * dx + dy * dy <= BRUSH * BRUSH;
-		        // only ~1 in 4 of them are pouring
-		        let sprinkle = fastrand::u8(0..4) == 0;
+	// lmb = sand, rmb = water
+	if let Some((mx, my)) = window.get_mouse_pos(MouseMode::Discard){
+	    let cx = mx as i32;
+	    let cy = my as i32;
 
-		        if inside_circle && sprinkle && world.is_empty(x, y){
-		            world.set(x, y, Material::Sand);
-		        }
-		    }
-	        }  
+	    if window.get_mouse_down(MouseButton::Left){
+	        pour(&mut world, cx, cy, Material::Sand);
+	    }
+	    if window.get_mouse_down(MouseButton::Right){
+	        pour(&mut world, cx, cy, Material::Water);
 	    }
 	}
-     
+
 	world.update();
 
 	// drawing world -> buffer -> window
