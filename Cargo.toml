@@ -6,3 +6,6 @@ edition = "2024"
 [dependencies]
 fastrand = "2.5.0"
 minifb = "0.29.0"
+
+[features]
+dev = []

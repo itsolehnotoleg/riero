@@ -26,6 +26,17 @@ impl Material{
 	    Material::Water => "Water",
 	}
     }
+
+    // turn typed text into material
+    pub fn from_name(name: &str) -> Option<Material>{
+        match name.to_lowercase().as_str(){
+            "air" => Some(Material::Air),
+	    "dirt" => Some(Material::Dirt),
+	    "sand" => Some(Material::Sand),
+	    "water" => Some(Material::Water),
+	    _ => None,
+	}
+    }
 }
 
 // one pixel of the world
@@ -140,6 +151,22 @@ impl World{
 	    self.cells[i] = Cell::new(material);
 	} 
     }
+
+    // reset the world to how it was at the start
+    pub fn reset(&mut self){
+        *self = World::new(self.width, self.height);
+    }
+
+    // replace every air cell with material
+    #[cfg(feature = "dev")]
+    pub fn fill_air(&mut self, material: Material){
+        for cell in self.cells.iter_mut(){
+            if cell.material == Material::Air{
+                *cell = Cell::new(material);
+	    }
+	}
+    }
+
     // swap two cells. a grain trades places with air
     fn swap(&mut self, x1: i32, y1: i32, x2: i32, y2: i32){
         let a = self.index(x1 as usize, y1 as usize);
