@@ -72,6 +72,8 @@ pub struct World{
     pub height: usize,
     // private: other files must use our functions to change it
     cells: Vec<Cell>,
+    // counts how many updates happened
+    frame: u64,
 }
 
 impl World{
@@ -86,7 +88,7 @@ impl World{
 		cells.push(Cell::new(material));
 	    }
 	}
-	World{width, height, cells}
+	World{width, height, cells, frame: 0}
     }
     
     // convert (x, y) into a position in the cells list
@@ -150,10 +152,16 @@ impl World{
 	for cell in self.cells.iter_mut(){
 	    cell.updated = false;
 	}
+
+	self.frame = self.frame.wrapping_add(1);
+	let left_to_right = self.frame % 2 == 0;
+	let w = self.width as i32;
+
         // goes bottom to top
 	// falling grain moves only once per frame
 	for y in(0..self.height as i32).rev(){
-            for x in 0..self.width  as i32{
+            for step in 0..w{
+		let x = if left_to_right{step} else{w - 1 - step};
 	        let i = self.index(x as usize, y as usize);
 		
  		// if cell moved we skip it
