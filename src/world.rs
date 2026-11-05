@@ -1,5 +1,7 @@
 // file that simulates world: materials, cells and grid
 
+const WATER_SPREAD: i32 = 5;
+
 #[derive(Clone, Copy, PartialEq)]
 pub enum Material{
     Air,
@@ -224,11 +226,26 @@ impl World{
 	}
 
 	// rule 3: can't fall at all so it goes side ways
-	if self.is_empty(x + dir, y){
-	    self.swap(x, y, x + dir, y);
-	}
-	else if self.is_empty(x - dir, y){
-	    self.swap(x, y, x - dir, y);
+	for d in[dir, -dir]{
+	    // find farthest cell possible
+	    let mut target = x;
+
+	    for step in 1..=WATER_SPREAD{
+	        let nx = x + d * step;
+
+		if !self.is_empty(nx, y){
+                    break;
+		}
+		target = nx;
+
+		if self.is_empty(nx, y + 1){
+                    break;
+		}
+	    }
+	    if target != x{
+	        self.swap(x, y, target, y);
+		return;
+	    }
 	}
     }
  
