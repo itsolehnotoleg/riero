@@ -82,8 +82,8 @@ pub fn draw_text(buffer: &mut[u32], width: usize, height:usize,
     for c in text.chars(){
         let rows = glyph(c);
 	
-	for(gy, row) in rows.iter().enumarate(){
-            for(gx, pixel) in row.chars().enumarate(){
+	for(gy, row) in rows.iter().enumerate(){
+            for(gx, pixel) in row.chars().enumerate(){
                 if pixel == '#'{
                     let px = cx + gx;
 		    let py = y + gy;
